@@ -93,11 +93,15 @@ internal sealed class MauiTiltSource
 
     private void OnReading(object? sender, AccelerometerChangedEventArgs args)
     {
+        var acceleration = args.Reading.Acceleration;
+        if (!TiltFilter.IsUsableReading(acceleration))
+            return;
+
         lock (_sampleLock)
         {
             if (!_running)
                 return;
-            _sample = args.Reading.Acceleration;
+            _sample = acceleration;
             _sampleTime = Stopwatch.GetTimestamp();
         }
     }

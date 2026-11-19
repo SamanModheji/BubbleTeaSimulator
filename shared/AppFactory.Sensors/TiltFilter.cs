@@ -15,6 +15,8 @@ public sealed class TiltFilter(double timeConstantSeconds = 0.12)
     private Tilt? _neutral;
     private ScreenRotation? _rotation;
 
+    public static bool IsUsableReading(Vector3 acceleration) => IsGravityMagnitude(acceleration.Length());
+
     public Tilt Update(Vector3 acceleration, ScreenRotation rotation, double seconds)
     {
         if (_rotation != rotation)
@@ -24,7 +26,7 @@ public sealed class TiltFilter(double timeConstantSeconds = 0.12)
         }
 
         var magnitude = acceleration.Length();
-        if (float.IsFinite(magnitude) && magnitude is >= 0.5f and <= 1.5f)
+        if (IsGravityMagnitude(magnitude))
         {
             var screenGravity = (rotation switch
             {
@@ -43,7 +45,8 @@ public sealed class TiltFilter(double timeConstantSeconds = 0.12)
 
         const double degrees = 180 / Math.PI;
         var angle = new Tilt(
-            Math.Atan2(gravity.Z, gravity.Y) * degrees,
+            // Screen-local +Z points toward the viewer. Tipping the top edge toward them gives gravity a negative Z reading.
+            Math.Atan2(-gravity.Z, gravity.Y) * degrees,
             Math.Atan2(gravity.X, Math.Sqrt(gravity.Y * gravity.Y + gravity.Z * gravity.Z)) * degrees);
         _neutral ??= angle;
         return new Tilt(Math.IEEERemainder(angle.PitchDegrees - _neutral.Value.PitchDegrees, 360),
@@ -51,4 +54,6 @@ public sealed class TiltFilter(double timeConstantSeconds = 0.12)
     }
 
     public void Recalibrate() => (_gravity, _neutral) = (null, null);
+
+    private static bool IsGravityMagnitude(float magnitude) => magnitude is >= 0.5f and <= 1.5f;
 }

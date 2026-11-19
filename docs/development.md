@@ -41,7 +41,7 @@ Bei `INSTALL_FAILED_UPDATE_INCOMPATIBLE` wurde eine bestehende Installation wahr
 
 ## Validierung
 
-Der lokale Linux-Build hat die Solution ohne Buildwarnungen oder -fehler gebaut. Alle 12 Tests waren erfolgreich. `apksigner verify` hat die Debug-APK bestätigt; Paketprüfung zeigte die mitgelieferte Audioressource, ARM64-/x64-Bibliotheken, einen optionalen Beschleunigungssensor und keine Internetberechtigung.
+Der lokale Linux-Build hat die Solution ohne Buildwarnungen oder -fehler gebaut. Alle 14 Tests waren erfolgreich, darunter der Test für die Trinkrichtung vom Sensorvektor bis zum Pegel. `apksigner verify` hat die Debug-APK bestätigt; die Paketprüfung zeigte die mitgelieferte Audioressource, ARM64-/x64-Bibliotheken, einen optionalen Beschleunigungssensor und keine Internetberechtigung.
 
 **Keine Gerätevalidierung:** In der Buildumgebung war kein Android-Gerät verbunden; der Download des Emulators und System-Images war nicht möglich. Vor einer Freigabe auf einem Tablet oder Emulator prüfen:
 
