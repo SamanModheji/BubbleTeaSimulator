@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/shared/">
+    <Project Path="shared/AppFactory.Physics/AppFactory.Physics.csproj" />
+    <Project Path="shared/AppFactory.Sensors/AppFactory.Sensors.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/BubbleTea.App/BubbleTea.App.csproj" />
+    <Project Path="src/BubbleTea.Game/BubbleTea.Game.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/BubbleTea.Tests/BubbleTea.Tests.csproj" />
+  </Folder>
+</Solution>
