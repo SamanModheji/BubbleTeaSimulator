@@ -119,7 +119,7 @@ internal sealed class PlayPage : ContentPage
             RefreshControls();
         if ((_game.State == CupState.Drinking) != (before == CupState.Drinking))
             _audio.SetDrinking(_game.State == CupState.Drinking);
-        if (_game.Level > 0 || _game.State != before)
+        if (_game.Level > 0 || _game.Stream.IsVisible || _game.State != before)
             _canvas.InvalidateSurface();
     }
 

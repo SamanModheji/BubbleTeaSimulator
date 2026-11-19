@@ -4,7 +4,7 @@ namespace BubbleTea.Tests;
 
 public class DrinkGameTests
 {
-    private static readonly DrinkSettings Settings = new(45, 30, 0.5, 0.25, 1);
+    private static readonly DrinkSettings Settings = new(45, 30, 0.5, 0.25, 1, FullFlowDegrees: 60, MinFlow: 0.5);
 
     [Fact]
     public void PourFillsCupAndClampsLevel()
@@ -37,22 +37,24 @@ public class DrinkGameTests
     }
 
     [Fact]
-    public void DrinksAtConfiguredRateAndStopsBelowExitThreshold()
+    public void DrinksAtTiltDependentRateAndStopsBelowExitThreshold()
     {
         var game = FullCup();
         game.Step(0.75, 45, 0);
-        Assert.Equal(0.9375, game.Level);
+        Assert.Equal(1 - 0.25 * 0.25 * 0.75, game.Level);
         game.Step(0.5, 30, 0);
-        Assert.Equal(0.8125, game.Level);
+        Assert.Equal(0.890625, game.Level);
+        game.Step(0.25, 80, 0);
+        Assert.Equal(0.828125, game.Level);
         game.Step(1, 29.9, 0);
         Assert.Equal(CupState.Full, game.State);
-        Assert.Equal(0.8125, game.Level);
+        Assert.Equal(0.828125, game.Level);
         game.Pour();
         game.Step(0.25, 60, 0);
         game.CancelTilt();
         game.Step(0.25, 60, 0);
         Assert.Equal(CupState.Full, game.State);
-        Assert.Equal(0.8125, game.Level);
+        Assert.Equal(0.828125, game.Level);
     }
 
     [Fact]
@@ -86,6 +88,9 @@ public class DrinkGameTests
     public void InvalidThresholdsAndTimeAreRejectedOrIgnored()
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new DrinkGame(Settings with { StopDegrees = 50 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new DrinkGame(Settings with { FullFlowDegrees = 30 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new DrinkGame(Settings with { MinFlow = 0 }));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new DrinkGame(Settings with { MinFlow = 1.1 }));
         var game = FullCup();
         game.Step(double.NaN, 70, 0);
         game.Step(-1, 70, 0);

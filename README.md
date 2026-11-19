@@ -5,7 +5,7 @@ Ein Offline-Spiel für Android-Tablets (ab Android 6.0 / API 23). Kinder können
 ## Spielen
 
 1. Das Tablet aufrecht halten und **Eingiessen** antippen.
-2. Die obere Kante des Tablets zu dir kippen und kurz in dieser Position halten. Der Teepegel sinkt mit einem Schlürfgeräusch. Zurückkippen stoppt das Trinken.
+2. Die obere Kante des Tablets zu dir kippen und kurz in dieser Position halten. Der Tee fliesst über den Becherrand, der Pegel sinkt mit einem Schlürfgeräusch. Je stärker die Neigung, desto kräftiger der Strahl. Zurückkippen stoppt das Ausgiessen.
 3. Ohne Sensor: **Halten & trinken** gedrückt halten. Mit **◎** lässt sich die aufrechte Haltung neu kalibrieren.
 4. Bei leerem Becher mit **Nochmal!** eine neue Runde starten.
 

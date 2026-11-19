@@ -30,9 +30,11 @@ public sealed class TiltFilter(double timeConstantSeconds = 0.12)
         {
             var screenGravity = (rotation switch
             {
-                ScreenRotation.Rotation90 => new Vector3(acceleration.Y, -acceleration.X, acceleration.Z),
+                // Android Surface rotation: ROTATION_90 means the device was turned 90° counter-clockwise,
+                // so its natural +X axis points up the screen and its +Y axis points to the screen's left.
+                ScreenRotation.Rotation90 => new Vector3(-acceleration.Y, acceleration.X, acceleration.Z),
                 ScreenRotation.Rotation180 => new Vector3(-acceleration.X, -acceleration.Y, acceleration.Z),
-                ScreenRotation.Rotation270 => new Vector3(-acceleration.Y, acceleration.X, acceleration.Z),
+                ScreenRotation.Rotation270 => new Vector3(acceleration.Y, -acceleration.X, acceleration.Z),
                 _ => acceleration
             }) / magnitude;
 

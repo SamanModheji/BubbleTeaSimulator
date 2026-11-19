@@ -8,9 +8,10 @@ public class TiltFilterTests
 {
     [Theory]
     [InlineData(ScreenRotation.Rotation0, 0, 1)]
-    [InlineData(ScreenRotation.Rotation90, -1, 0)]
+    // Device axes when the screen is upright. Landscape-native tablets locked to portrait report 90° or 270°.
+    [InlineData(ScreenRotation.Rotation90, 1, 0)]
     [InlineData(ScreenRotation.Rotation180, 0, -1)]
-    [InlineData(ScreenRotation.Rotation270, 1, 0)]
+    [InlineData(ScreenRotation.Rotation270, -1, 0)]
     public void ForwardPitchIsScreenRelative(ScreenRotation rotation, int x, int y)
     {
         var filter = new TiltFilter();
@@ -18,6 +19,28 @@ public class TiltFilterTests
         var tilted = filter.Update(new Vector3(x, y, -1) / MathF.Sqrt(2), rotation, 5);
         Assert.Equal(45, tilted.PitchDegrees, 4);
         Assert.Equal(0, tilted.RollDegrees, 4);
+    }
+
+    [Theory]
+    [InlineData(ScreenRotation.Rotation0, -0.5f, 0.866f)]
+    [InlineData(ScreenRotation.Rotation90, 0.866f, 0.5f)]
+    [InlineData(ScreenRotation.Rotation180, 0.5f, -0.866f)]
+    [InlineData(ScreenRotation.Rotation270, -0.866f, -0.5f)]
+    public void SidewaysRollIsScreenRelative(ScreenRotation rotation, float x, float y)
+    {
+        // The same physical pose in every rotation: screen right edge lowered by 30°.
+        var upright = rotation switch
+        {
+            ScreenRotation.Rotation90 => Vector3.UnitX,
+            ScreenRotation.Rotation180 => -Vector3.UnitY,
+            ScreenRotation.Rotation270 => -Vector3.UnitX,
+            _ => Vector3.UnitY
+        };
+        var filter = new TiltFilter();
+        filter.Update(upright, rotation, 1);
+        var tilted = filter.Update(new Vector3(x, y, 0), rotation, 5);
+        Assert.Equal(-30, tilted.RollDegrees, 1);
+        Assert.Equal(0, tilted.PitchDegrees, 1);
     }
 
     [Fact]

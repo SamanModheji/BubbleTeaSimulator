@@ -41,11 +41,24 @@ Bei `INSTALL_FAILED_UPDATE_INCOMPATIBLE` wurde eine bestehende Installation wahr
 
 ## Validierung
 
-Der lokale Linux-Build hat die Solution ohne Buildwarnungen oder -fehler gebaut. Alle 14 Tests waren erfolgreich, darunter der Test für die Trinkrichtung vom Sensorvektor bis zum Pegel. `apksigner verify` hat die Debug-APK bestätigt; die Paketprüfung zeigte die mitgelieferte Audioressource, ARM64-/x64-Bibliotheken, einen optionalen Beschleunigungssensor und keine Internetberechtigung.
+Der lokale Linux-Build hat die Solution ohne Buildwarnungen oder -fehler gebaut. Alle 33 Tests waren erfolgreich, darunter der Test für die Trinkrichtung vom Sensorvektor bis zum Pegel und die Zustandstests des Ausgiessstrahls. `apksigner verify` hat die Debug-APK bestätigt; die Paketprüfung zeigte die mitgelieferte Audioressource, ARM64-/x64-Bibliotheken, einen optionalen Beschleunigungssensor und keine Internetberechtigung.
 
 **Keine Gerätevalidierung:** In der Buildumgebung war kein Android-Gerät verbunden; der Download des Emulators und System-Images war nicht möglich. Vor einer Freigabe auf einem Tablet oder Emulator prüfen:
 
 - Im Flugmodus starten und einschenken. Der Pegel steigt im transparenten Becher und bleibt beim seitlichen Neigen innerhalb der Kontur.
 - Aufrecht neu kalibrieren. Kurzes Kippen, seitliches Neigen und Kippen in Gegenrichtung dürfen nicht trinken. Beim gehaltenen Kippen zu sich hin sinkt der Pegel; beim Zurückkippen stoppen Pegel und Ton.
 - **Halten & trinken** testen, einschliesslich Loslassen vor Ablauf der Haltezeit. Vollständig austrinken und mit **Nochmal!** neu füllen.
-- Während des Trinkens kurz die App verlassen: Der Ton und das Trinken sollen stoppen. Auf einem natürlich quer ausgerichteten Tablet zusätzlich die Sensorachsen prüfen.
+- Während des Trinkens kurz die App verlassen: Der Ton und das Trinken sollen stoppen.
+
+### Hardwaretests Hochformat und Ausgiessen
+
+Automatisiert abgedeckt sind die Achsenumrechnung für alle vier Rotationen, die Zustandswechsel des Strahls und die Ausfluss-Grenzwerte. Die CI prüft das Manifest der APK. Auf echter Hardware zusätzlich prüfen, möglichst auf einem Tablet mit Android 16 oder neuer und einem Tablet mit natürlicher Querausrichtung:
+
+- Bei aktivierter automatischer Drehung das Tablet in alle vier Richtungen drehen, auch beim Start in Querlage. Die App bleibt im Hochformat und startet nicht neu; ein Becher bleibt gefüllt.
+- `adb shell dumpsys window | grep -E "mCurrentRotation|mRotation"` notieren. Bei natürlich quer ausgerichteten Tablets liegt die Rotation im Hochformat bei 90 oder 270.
+- Auf diesen Tablets prüfen, dass Kippen der Oberkante zu sich hin trinkt und Wegkippen nicht. Seitliches Neigen nach rechts muss die Oberfläche wie auf einem Hochformat-Gerät bewegen.
+- Falls sich die App trotzdem dreht, unter **Einstellungen › Apps › Bubble Tea › Seitenverhältnis** die App-Standardeinstellung wählen.
+- Bei ca. 40° Neigung erscheint nach der Haltezeit ein dünner Strahl über den Rand; stärkeres Kippen macht ihn breiter und weiter, und der Pegel sinkt schneller. Der Strahl wird nicht an der Becherkontur abgeschnitten.
+- Seitlich geneigt fliesst der Strahl über den höher stehenden Rand.
+- Zurückkippen unter 30°, **◎** oder Verlassen der App: Pegel und Ton stoppen sofort, der Rest des Strahls fällt sichtbar ab.
+- Mehrere Becher austrinken und dabei auf ruckelfreie Darstellung achten.

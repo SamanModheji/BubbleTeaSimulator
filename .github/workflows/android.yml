@@ -42,6 +42,18 @@ jobs:
         run: |
           apk=src/BubbleTea.App/bin/Debug/net10.0-android36.0/com.samanmodheji.bubbletea-Signed.apk
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$apk"
+      - name: Verify portrait lock in packaged manifest
+        run: |
+          apk=src/BubbleTea.App/bin/Debug/net10.0-android36.0/com.samanmodheji.bubbletea-Signed.apk
+          manifest=$("$ANDROID_HOME/build-tools/36.0.0/aapt2" dump xmltree --file AndroidManifest.xml "$apk")
+          # Android 16+ ignores screenOrientation on tablets unless the app is a game (appCategory 0).
+          if ! grep -Eq 'screenOrientation\(0x[0-9a-f]+\)=1$' <<<"$manifest" ||
+             ! grep -Eq 'appCategory\(0x[0-9a-f]+\)=0$' <<<"$manifest" ||
+             ! grep -q 'PROPERTY_COMPAT_ALLOW_RESTRICTED_RESIZABILITY' <<<"$manifest"; then
+            echo "$manifest"
+            echo "::error::Packaged manifest does not lock the app to portrait on large screens."
+            exit 1
+          fi
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bubble-tea-debug-apk
